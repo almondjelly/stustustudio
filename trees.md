@@ -1,7 +1,15 @@
 ---
 title: Trees
-has_toc: true
 ---
+
+<details open markdown="block">
+  <summary>
+    Table of contents
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
 
 ## Definitions
 * **Depth:** How far a node is from the root. The root has a depth of 0.
@@ -105,14 +113,103 @@ def traverse_postorder(root):
 ```python
 import collections
 
-def bfs(root):
+def bfs_print(root):
   queue = collections.deque
   while queue:
     node = queue.popleft()
+    
     print(node.val)
+    
     if node.left:
       queue.append(node.left)
     if node.right:
       queue.append(node.right)
 ```
 
+
+## Invert binary tree
+Given the root of a binary tree, invert the tree and return its root.
+
+### Recursive
+```python
+def invert_bt(root):
+  if not root:
+    return root
+  
+  left = invert_bt(root.left)
+  right = invert_bt(root.right)
+  
+  root.left = right
+  root.right = left
+  
+  return root
+```
+
+### Iterative
+```python
+import collections
+
+def invert_bt(root):
+  queue = collections.deque([root])
+  while queue:
+    node = queue.popleft()
+    
+    if node:
+      node.left, node.right = node.right, node.left
+      queue.append(node.left)
+      queue.append(node.right)
+    
+  return root 
+```
+
+## Validate BST
+
+### Recursive
+```python
+def is_valid_bst(root, low=-numpy.inf, high=numpy.inf):
+  if not root:
+    return True
+    
+  if root.val <= low or root.val >= high:
+    return False
+  
+  return is_valid_bst(root.left, low, root.val) and is_valid_bst(root.right, root.val, high)  
+```
+
+### Iterative
+```python
+def is_valid_bst(root):
+  stack = []
+  previous = -numpy.inf
+  
+  while stack or root:
+    while root:
+      stack.append(root)
+      root = root.left
+      
+    root = stack.pop()
+    if root.val <= previous:
+      return False
+      
+    previous = root.val
+    root = root.right
+    
+  return True
+```
+
+## Get kth smallest element in a BST
+```python
+def get_kth_smallest_element(root, k):
+  stack = []
+  while k > 0:
+    while root:
+      stack.append(root)
+      root = root.left
+      
+    root = stack.pop()
+    k -= 1
+    if k == 0:
+      return root.val
+      
+    root = root.right
+```
